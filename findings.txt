@@ -1,0 +1,20 @@
+'King of the hill' - Best player in generation is cloned throughout population.
+A. 300 generations with 100 pop. 10 epochs per player.
+100 generations 300 pop. 10 epochs.
+learning_rate = 0.02
+= Converged at 4.805 +- 0.001
+
+B. learning_rate = 0.08
+100 generations 100 pop. 10 epochs
+= 4.841
+100 more generations
+= 4.809
+reached convergence of A in half the generations
+setting learning_rate to 0.16 to see if similar result is achieved in 100 gens
+
+C. learning_rate = 0.16
+100 gens 100 pop
+=4.813
+
+// keep batch size at 4000. it affects how gpu handles memory.
+
