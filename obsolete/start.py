@@ -6,16 +6,13 @@ import populate as pp
 #for model and training options go to populate.py
 Data = pd.read_csv('abalone.csv',names=['Sex','Length','Diameter','Height','Whole weight','Shucked weight','Viscera weight','Shell weight','Rings'],)
 
-#TODO constants to be replaced with users input/save file
 #Sim Options
-POPULATION = 100
-GENERATIONS = 20
+POPULATION = 2
+GENERATIONS = 5
 #Training Options
-EPOCHS = 25
-LEARNING_RATE = 2.8
-CLIP_VALUE = 2.5
-OPTIMIZER = True
-SEQUENCE_MAX = 24
+EPOCHS = 10
+LEARNING_RATE = 0.16
+CLIP_VALUE = 1.0
 
 #unique id 'player#' to retrieve model from class instance
 activePopulationID = []
@@ -24,9 +21,9 @@ activePopulationModels = []
 
 #Generation Analysis Lists
 activePopulationLossHistory = []
-
-
 #TODO
+
+#Fix DataTypes
 Data['Length'] = pd.to_numeric(Data['Length'], errors='coerce')
 Data['Diameter'] = pd.to_numeric(Data['Diameter'], errors='coerce')
 Data['Height'] = pd.to_numeric(Data['Height'], errors='coerce')
@@ -51,33 +48,31 @@ Labels = Feature.pop('Rings')
 #numpy array before feeding into tensorflow
 Feature = np.array(Feature, dtype=float)
 Labels = np.array(Labels, dtype=float)
+sequence_length = 10
+Feature_reshaped = np.reshape(Feature, (Feature.shape[0], sequence_length, 1))
+
 
 #initialize individual players. MUST REMAIN OUTSIDE MAIN LOOP
 baseName = "player"
-activePopulationID = []
-
-for i in range(0, POPULATION):
-    uniqueName = baseName + str(i)
+for i in range(0,POPULATION):
+    uniqueName = baseName+str(i)
     print(uniqueName)
-    
-    # Create Player instance
-    player = pp.Player()
-    
-    # Check for existing model progress
+    makeBot = f"{uniqueName} = pp.Player()"
+    exec(makeBot)
+    #TODO check for existing model progress
     try:
-        player.DataModel = tf.keras.models.load_model('model.h5')
-        print("Using saved model. Move save if you do not want this.")
+        initializeBot = f"{uniqueName}.DataModel = tf.keras.models.load_model('model.h5')"
+        exec(initializeBot)
+        print("using saved model. move save if you do not want this.")
     except:
-        player.initializeModel(i, LEARNING_RATE, CLIP_VALUE)
+        initializeBot = f"{uniqueName}.initializeModel(i,{LEARNING_RATE},{CLIP_VALUE})"
+        exec(initializeBot)
         print('Model Initialized...')
-    
-    activePopulationID.append(player)
+    exec(initializeBot)
+    activePopulationID.append(uniqueName)
 
 #begin loop to play through set # of generations
 curRound = 1
-#has to equal # of columns
-sequence_length = 10
-#main generation loop
 while curRound <= GENERATIONS:
     print(f"ROUND {curRound} out of {GENERATIONS}")
     #local analysis by generation
@@ -87,10 +82,10 @@ while curRound <= GENERATIONS:
         #temp to hold active model
         activeModel = None
         #print(individual,"Has started training...")
-        Feature_reshaped = np.reshape(Feature, (Feature.shape[0], sequence_length, 1))
-        #model is trained.
-        print(d"{individual} is playing")
-        activeModel = individual.train(Feature_reshaped, Labels, epochs=EPOCHS)
+        #takes unique id and makes a string of the code to execute.
+        getModel = f"activeModel = {individual}.train(Feature_reshaped,Labels,epochs={EPOCHS})"
+        #execute string. model is trained.
+        exec(getModel)
         #ensure model was returned to temp var
         if(activeModel != None):
             activePopulationModels.append(activeModel)
@@ -105,29 +100,23 @@ while curRound <= GENERATIONS:
     for index, individual in enumerate(activePopulationLoss):
         findLowest = min(activePopulationLoss)
         if(individual == findLowest):
-            genWinner = activePopulationID[index]
+            genWinner = f"player{index}"
             print(f"{genWinner} had the best round with {individual:.3f}")
             activePopulationLossHistory.append(individual)
 
     #make all active players models equal the winning model
             #TODO Mix weights and biases if enabled
-    if OPTIMIZER:
-        for player in activePopulationID:
-            if player != genWinner:
-                returnModel = genWinner.crossover(player)
-                player.DataModel = returnModel.DataModel
-    else:
-        for player in activePopulationID:
-            if player != genWinner:
-                player.DataModel = genWinner.DataModel
-                #print(f"{player} has been replaced!")
+    for player in activePopulationID:
+        if player != genWinner:
+            saveGenWinner = f"{player}.DataModel = {genWinner}.DataModel" 
+            #print(f"{player} has been replaced!")
     #end conditions
     curRound += 1
 
 
-activePopulationID[0].DataModel.save('model.h5')
+exec(f"player0.DataModel.save('model.h5')")
 print("Done.\n\n")
 print(activePopulationLossHistory)
-results = activePopulationID[0].DataModel.predict(Feature)
-for i in range(0, len(results)):
-    print(Feature[i], results[i])
+exec(f"results = player0.DataModel.predict(Feature_reshaped)")
+for i in range(0,len(results)):
+    print(Feature[i],results[i])
