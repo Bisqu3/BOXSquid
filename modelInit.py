@@ -1,22 +1,20 @@
 from keras.models import Sequential
-from keras.layers import Dense,LSTM
+from keras.layers import Dense,LSTM,BatchNormalization,Dropout
 
-def initializeLSTM(inputShape,layers=0,neuronCount=64,half_life=False, activation='linear'):
+def initializeLSTM(inputShape,neuronCount, layers=0, activation='linear'):
     model = Sequential()
-    if layers > 0:
-        #multi layer LSTM
-        model.add(LSTM(neuronCount, return_sequences=True , input_shape=inputShape))
-        neurons = neuronCount
-        for i in range(layers):
-            if half_life:
-                if neurons > 1:
-                    neurons = neurons//2
-                else: continue
-            model.add(LSTM(neuronCount))
-    else:
-        #single layer LSTM
-        model.add(LSTM(neuronCount,input_shape=inputShape))
-    model.add(Dense(1,activation='linear'))
+    for neurons in neuronCount:
+        model.add(LSTM(neurons, return_sequences=True, activation='relu'))
+    model.add(Dense(1,activation=activation))
+    return model
+
+def initializeRNN():
+    model = Sequential([ 
+    Dense(256, activation='relu', input_shape=(8,)), 
+    Dense(256, activation='relu'), 
+    Dropout(0.3),  
+    Dense(1, activation='relu') 
+    ]) 
     return model
 
 #confirm structure

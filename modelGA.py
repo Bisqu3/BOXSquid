@@ -7,8 +7,7 @@ class Player:
     
     #assign id# and compile model
     def initialize(self,learningRate,clipValue):
-        self.model.compile(loss='mse',
-                  optimizer='adam')
+        self.model.compile(optimizer='adam', loss='mae', metrics=['mse'])
 
     #get model status
     def getModelState(self):
