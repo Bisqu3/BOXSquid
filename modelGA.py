@@ -1,4 +1,5 @@
 import tensorflow as tf
+from keras.optimizers import Adam
 #player class holds individuals information
 class Player:
     def __init__(self,uniqueID):
@@ -7,7 +8,8 @@ class Player:
     
     #assign id# and compile model
     def initialize(self,learningRate,clipValue):
-        self.model.compile(optimizer='adam', loss='mae', metrics=['mse'])
+        optimizer = Adam(learning_rate=learningRate, clipvalue=clipValue)
+        self.model.compile(optimizer=optimizer, loss='mae', metrics=['mse'])
 
     #get model status
     def getModelState(self):

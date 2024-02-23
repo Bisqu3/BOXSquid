@@ -3,8 +3,14 @@ from keras.layers import Dense,LSTM,BatchNormalization,Dropout
 
 def initializeLSTM(inputShape,neuronCount, layers=0, activation='linear'):
     model = Sequential()
+    count = 0
     for neurons in neuronCount:
-        model.add(LSTM(neurons, return_sequences=True, activation='relu'))
+        model.add(LSTM(neurons, return_sequences=True,input_shape=inputShape, activation='relu'))
+        if count == 0:
+            model.add(LSTM(neurons, return_sequences=True,input_shape=inputShape, activation='relu'))
+        else:
+            model.add(LSTM(neurons, return_sequences=True, activation='relu'))
+        count += 1
     model.add(Dense(1,activation=activation))
     return model
 

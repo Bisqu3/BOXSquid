@@ -7,19 +7,18 @@ import modelAnalysis as mA
 #data scripts
 import dataPreProc as dPP
 import numpy as np
-
 #data preproc constants
 N_STEPS = 1
-BATCH_SIZE = 1
+BATCH_SIZE = 64
 
 #simulation constants
 POPULATION = 1
-EPOCHS = 1
+EPOCHS = 200
 playerList = {}
 
 #model constants
-LEARNING_RATE = 0.7
-CLIP_VALUE = 0.15
+LEARNING_RATE = 0.00001
+CLIP_VALUE = 2.0
 LAYER_NEURONS = [8,4]
 
 

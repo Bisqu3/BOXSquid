@@ -1,0 +1,2 @@
+run tensorboard --logdir=./logs
+to see more analysis
