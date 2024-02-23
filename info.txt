@@ -1,2 +1,2 @@
-run tensorboard --logdir=./logs
-to see more analysis
+tensorboard --logdir=./logs
+run in terminal after training to see results.
