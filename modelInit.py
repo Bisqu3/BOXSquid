@@ -5,7 +5,6 @@ def initializeLSTM(inputShape,neuronCount, layers=0, activation='linear'):
     model = Sequential()
     count = 0
     for neurons in neuronCount:
-        model.add(LSTM(neurons, return_sequences=True,input_shape=inputShape, activation='relu'))
         if count == 0:
             model.add(LSTM(neurons, return_sequences=True,input_shape=inputShape, activation='relu'))
         else:

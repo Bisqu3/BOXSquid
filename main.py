@@ -13,7 +13,7 @@ BATCH_SIZE = 64
 
 #simulation constants
 POPULATION = 1
-EPOCHS = 200
+EPOCHS = 1000
 playerList = {}
 
 #model constants
@@ -38,6 +38,8 @@ def main():
         print("Test generator data shape:", generator_test.data.shape)
         #(8,8) refers to 8 different datatypes that are unique from eachother(8 columns, 8 different types).
         playerList[player].model = mi.initializeLSTM((8,8), LAYER_NEURONS)
+        #RNN likely broken rn
+        #playerList[player].model = mi.initializeRNN()
         playerList[player].initialize(LEARNING_RATE,CLIP_VALUE)
         results = mt.generatorModelTrain(generator_train, generator_test, playerList[player].model,EPOCHS)
         #print(results)
