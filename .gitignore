@@ -3,3 +3,4 @@ secrets/
 logs/
 wandb/
 models/
+obsolete/
